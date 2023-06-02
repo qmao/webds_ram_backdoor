@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "@webds/ram_backdoor",
+  "description": "@webds/ram_backdoor settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}
