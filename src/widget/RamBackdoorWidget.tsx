@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ReactWidget } from "@jupyterlab/apputils";
+import { ReactWidget } from '@jupyterlab/apputils';
 
 import RamBackdoorComponent from "./RamBackdoorComponent";
 

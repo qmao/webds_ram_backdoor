@@ -1,36 +1,75 @@
-import React from "react";
+import React from 'react';
 
-import Typography from "@mui/material/Typography";
+import Stack from '@mui/material/Stack';
 
-import { Canvas } from "./mui_extensions/Canvas";
-import { Content } from "./mui_extensions/Content";
-import { Controls } from "./mui_extensions/Controls";
+import { Canvas } from './mui_extensions/Canvas';
+import { Content } from './mui_extensions/Content';
+import { Controls } from './mui_extensions/Controls';
+import { CustomControl } from './CustomControl';
+import { RbSymbolView } from './RbSymbolView';
+import { RbCards } from './RbCards';
+import { RbMonitor } from './RbMonitor';
 
 export const Landing = (props: any): JSX.Element => {
-  return (
-    <Canvas title="Ram Backdoor">
-      <Content
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <Typography variant="h1">Content</Typography>
-      </Content>
-      <Controls
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <Typography variant="h3">Controls</Typography>
-      </Controls>
-    </Canvas>
-  );
+    const [callback, setCallback] = React.useState('');
+    const [ui, setUi] = React.useState({
+        page: 'cards',
+        watch: {}
+    });
+
+    const onUpdate = (u: any) => {
+        if (JSON.stringify(ui) === JSON.stringify(u) && u.force_update === false) {
+            return;
+        }
+
+        let update: any = JSON.parse(JSON.stringify(u));
+        update.force_update = false;
+        setUi(update);
+        console.log('UPDATE UI@@@@@@@111', update);
+    };
+
+    const onButtonClick = (title: any) => {
+        setCallback(title);
+    };
+
+    return (
+        <>
+            <Canvas title={'RAM Backdoor'} sx={{ width: 1100 }}>
+                <Content sx={{ height: 530 }}>
+                    <Stack direction="row" sx={{ height: '100%' }}>
+                        {ui.page === 'cards' && <RbCards ui={ui} onUpdate={onUpdate} />}
+                        {ui.page === 'table' && (
+                            <RbSymbolView ui={ui} onUpdate={onUpdate} />
+                        )}
+                        {ui.page === 'monitor' && (
+                            <RbMonitor
+                                ui={ui}
+                                onUpdate={onUpdate}
+                                resetCallback={() => {
+                                    setCallback('');
+                                }}
+                                callback={callback}
+                            />
+                        )}
+                    </Stack>
+                </Content>
+                <Controls
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <CustomControl
+                        onUpdate={onUpdate}
+                        ui={ui}
+                        onButtonClick={onButtonClick}
+                    />
+                </Controls>
+            </Canvas>
+        </>
+    );
 };
 
 export default Landing;
