@@ -33,20 +33,21 @@ export let webdsService: WebDSService;
 const plugin: JupyterFrontEndPlugin<void> = {
   id: "@webds/ram_backdoor:plugin",
   autoStart: true,
-  requires: [ILauncher, ILayoutRestorer, WebDSService],
-  optional: [ISettingRegistry],
+  requires: [ILauncher, ILayoutRestorer, WebDSService, ISettingRegistry],
+  optional: [],
   activate: (
     app: JupyterFrontEnd,
     launcher: ILauncher,
     restorer: ILayoutRestorer,
     service: WebDSService,
-    settingRegistry: ISettingRegistry | null
+    settingRegistry: ISettingRegistry
   ) => {
     console.log("JupyterLab extension @webds/ram_backdoor is activated!");
 
     webdsService = service;
 
-    if (settingRegistry) {
+/*
+    if (false || settingRegistry) {
       settingRegistry
         .load(plugin.id)
         .then(settings => {
@@ -56,6 +57,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           console.error('Failed to load settings for @webds/ram_backdoor.', reason);
         });
     }
+*/
 
     let widget: WebDSWidget;
     const { commands, shell } = app;
@@ -74,6 +76,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           widget.title.label = Attributes.label;
           widget.title.icon = defaultIcon;
           widget.title.closable = true;
+		  console.log("QQQQQQQQQQ3");
         }
 
         if (!tracker.has(widget)) tracker.add(widget);

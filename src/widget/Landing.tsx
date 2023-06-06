@@ -34,8 +34,8 @@ export const Landing = (props: any): JSX.Element => {
 
     return (
         <>
-            <Canvas title={'RAM Backdoor'} sx={{ width: 1100 }}>
-                <Content sx={{ height: 530 }}>
+            <Canvas title={'RAM Backdoor'} sx={{ width: 1200 }}>
+                <Content sx={{ height: 480 }}>
                     <Stack direction="row" sx={{ height: '100%' }}>
                         {ui.page === 'cards' && <RbCards ui={ui} onUpdate={onUpdate} />}
                         {ui.page === 'table' && (
