@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Accordion,
   Stack,
@@ -18,13 +18,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { updateWatch } from './api';
 
 export const RbAccordions = (props: any): JSX.Element => {
-  const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [mode, setMode] = React.useState(props.ui.watch.settings.mode);
-  const [format, setFormat] = React.useState(props.ui.watch.settings.format);
-  const [autoRefreshEnable, setAutoRefreshEnable] = React.useState(
+  const [expanded, setExpanded] = useState<string | false>(false);
+  const [mode, setMode] = useState(props.ui.watch.settings.mode);
+  const [format, setFormat] = useState(props.ui.watch.settings.format);
+  const [autoRefreshEnable, setAutoRefreshEnable] = useState(
     props.ui.watch.settings.auto_refresh !== 0
   );
-  const [refreshSpeed, setRefreshSpeed] = React.useState(
+  const [refreshSpeed, setRefreshSpeed] = useState(
     props.ui.watch.settings.auto_refresh
   );
 
@@ -82,7 +82,9 @@ export const RbAccordions = (props: any): JSX.Element => {
     setRefreshSpeed(speed);
   };
 
-  function handleSliderChange(event: any, newValue: any) {}
+  function handleSliderChange(event: any, newValue: any) {
+    setRefreshSpeed(newValue);
+  }
 
   function handleSliderChangeCommitted(event: any, newValue: any) {
     onSettingsUpdate({ auto_refresh: newValue });
@@ -207,7 +209,7 @@ export const RbAccordions = (props: any): JSX.Element => {
               </Stack>
               {refreshSpeed > 0 && (
                 <Slider
-                  defaultValue={refreshSpeed}
+                  value={refreshSpeed}
                   valueLabelFormat={valuetext}
                   valueLabelDisplay="on"
                   step={50}
