@@ -1,20 +1,51 @@
-function updateAddressesToHex(data: any) {
+function updateAddressesToHex(data: any, list: any, settings: any) {
+  let index: any = 0;
   function convertToHex(obj: any) {
     for (const key in obj) {
       if (typeof obj[key] === 'object') {
-        convertToHex(obj[key]);
+        if (key === 'data') {
+          const vlist: any = obj[key];
+          obj[key] = vlist.map((v: any) => {
+            let result: any = v.toString(settings.format).toUpperCase();
+            switch (settings.format) {
+              case 2:
+                result = result.padStart(32, '0');
+                break;
+              case 16:
+                result = '0x' + result.padStart(8, '0');
+                break;
+            }
+            return result;
+          });
+        } else {
+          convertToHex(obj[key]);
+          if (Array.isArray(obj[key]) && key.startsWith('Index')) {
+            index = 0; // Reset index after processing each "Index" object
+          }
+        }
       } else if (key === 'address') {
         obj[key] = '0x' + obj[key].toString(16).toUpperCase();
+        obj['symbol'] = list[index].name;
+        index = index + 1;
       }
     }
   }
 
   convertToHex(data);
-  return JSON.stringify(data, null, 2);
+
+  const updatedData: any = { settings: settings };
+  for (const [key, values] of Object.entries(data)) {
+    updatedData[key] = (values as any[]).map((item: any) => ({
+      symbol: item.symbol,
+      ...item
+    }));
+  }
+
+  return JSON.stringify(updatedData, null, 2);
 }
 
-export const openJsonInNewWindow = (data: any) => {
-  const jsonString = updateAddressesToHex(data);
+export const openJsonInNewWindow = (data: any, list: any, settings: any) => {
+  const jsonString = updateAddressesToHex(data, list, settings);
 
   const newWindow = window.open('', '_blank');
   if (newWindow) {

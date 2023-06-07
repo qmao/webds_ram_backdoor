@@ -254,7 +254,7 @@ export const RbMonitor = (props: any): JSX.Element => {
     const [busy, setBusy] = useState(false);
 
     const counter = useRef(0);
-    const counterUi = useRef(-1);
+    const counterUi = useRef(0);
 
     interface IResponse {
         address: any;
@@ -285,6 +285,7 @@ export const RbMonitor = (props: any): JSX.Element => {
 
         switch (data.status) {
             case 'run':
+                console.log(data.data);
                 sseData.current = data.data;
                 counter.current = counter.current + 1;
                 sseDataBuffer.current[`Index${sseDataBufferCount.current}`] = data.data;
@@ -322,17 +323,21 @@ export const RbMonitor = (props: any): JSX.Element => {
         setOpenAlert(true);
     }
 
-    function setupReadList(all: any) {
+    function getReadList(all: any) {
         let update: any = [];
         symbols.forEach((s: any) => {
             if (s.select || all) {
-                update.push({ address: parseInt(s.address, 16), length: 1 });
+                update.push({
+                    address: parseInt(s.address, 16),
+                    length: 1,
+                    name: s.name
+                });
             }
         });
         return update;
     }
 
-    async function sampleTestData() {
+    async function UiLoop() {
         if (autoState.current === false) {
             console.log('---------END-------------');
             return;
@@ -340,6 +345,7 @@ export const RbMonitor = (props: any): JSX.Element => {
 
         if (counterUi.current < counter.current) {
             counterUi.current = counter.current;
+
             sseData.current.forEach((data: any) => {
                 let sym: any = symbols.find(
                     (s: any) => parseInt(s.address, 16) === data.address
@@ -354,7 +360,24 @@ export const RbMonitor = (props: any): JSX.Element => {
             });
             setSymbols([...symbols]);
         }
-        requestAnimationFrame(sampleTestData);
+        requestAnimationFrame(UiLoop);
+    }
+
+    function ResetUI() {
+        sseDataBuffer.current = {};
+        sseDataBufferCount.current = 0;
+        counterUi.current = 0;
+        counter.current = 0;
+
+        let newData: any = [...symbols];
+        newData.forEach((s: any) => {
+            if (s.select) {
+                //let value: any = data.shift();
+                s.data = [];
+                s.latest = undefined;
+            }
+        });
+        setSymbols(newData);
     }
 
     async function Terminate() {
@@ -370,10 +393,11 @@ export const RbMonitor = (props: any): JSX.Element => {
                 let update: any = JSON.parse(JSON.stringify(props.ui));
                 update.auto = auto;
                 props.onUpdate(update);
-                openJsonInNewWindow(sseDataBuffer.current);
-
-                sseDataBuffer.current = {};
-                sseDataBufferCount.current = 0;
+                openJsonInNewWindow(
+                    sseDataBuffer.current,
+                    getReadList(false),
+                    props.ui.watch.settings
+                );
             }
         } else {
             setBusy(false);
@@ -386,7 +410,8 @@ export const RbMonitor = (props: any): JSX.Element => {
         setBusy(true);
         if (auto === true) {
             addEvent();
-            sampleTestData();
+            ResetUI();
+            UiLoop();
             //disable ui
             let update: any = JSON.parse(JSON.stringify(props.ui));
             update.auto = auto;
@@ -397,7 +422,7 @@ export const RbMonitor = (props: any): JSX.Element => {
                 interval: props.ui.watch.settings.auto_refresh,
                 data: []
             };
-            ss.data = setupReadList(false);
+            ss.data = getReadList(false);
             ReadRAM(ss, true).then((data: any) => {
                 setBusy(false);
             });
@@ -429,7 +454,7 @@ export const RbMonitor = (props: any): JSX.Element => {
     }, []);
 
     const ReadSymbols = (all: any) => {
-        let update: any = setupReadList(all);
+        let update: any = getReadList(all);
         ReadRAM(update, false)
             .then((data: any) => {
                 let newData: any = [...symbols];
