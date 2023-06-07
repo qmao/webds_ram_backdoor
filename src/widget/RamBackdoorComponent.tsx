@@ -7,6 +7,7 @@ import { ThemeProvider } from '@mui/material/styles';
 
 import Landing from './Landing';
 import { requestAPI, webdsService } from './local_exports';
+import { GetSymbolTable } from './api';
 
 const getIdentify = async (): Promise<any> => {
     const dataToSend: any = {
@@ -24,43 +25,38 @@ const getIdentify = async (): Promise<any> => {
     }
 };
 
-const runApplicationFW = async (): Promise<any> => {
-    try {
-        return await requestAPI<any>('command?query=runApplicationFirmware');
-    } catch (error) {
-        console.error(
-            `Error - GET /webds/command?query=runApplicationFirmware\n${error}`
-        );
-        return Promise.reject('Failed to run application firmware');
-    }
-};
-
 export const RamBackdoorComponent = (props: any): JSX.Element => {
     const [initialized, setInitialized] = useState<boolean>(false);
     const [alert, setAlert] = useState<string | undefined>(undefined);
+    const [table, setTable] = useState({});
 
     const webdsTheme = webdsService.ui.getWebDSTheme();
 
     useEffect(() => {
+        const checkHex = async () => {
+            if (webdsService.pinormos) {
+                webdsService.packrat.cache.addApplicationHex().then((ret: any) => {
+                    console.log(ret);
+                }).catch((e: any) => {
+                    console.log(e.toString());
+                    throw new Error("HEX file not found"); 
+                })
+                
+            }
+        }
+
         const initialize = async () => {
-            let identify: any;
-            try {
-                identify = await getIdentify();
-            } catch (error) {
-                console.error(error);
-                setAlert("");
-                return;
-            }
-            if (identify.mode === 'rombootloader') {
-                try {
-                    await runApplicationFW();
-                } catch (error) {
-                    console.error(error);
-                    setAlert("");
-                    return;
-                }
-            }
-            setInitialized(true);
+            getIdentify().then((identify: any) => {
+                console.log(identify);
+                return GetSymbolTable(identify["buildID"]);
+            }).then((table: any) => {
+                setTable(table);
+                return checkHex();
+            }).then((ret: any) => {
+                setInitialized(true);
+            }).catch((e: any) => {
+                setAlert(e.toString());
+            })
         };
         initialize();
     }, []);
@@ -77,7 +73,7 @@ export const RamBackdoorComponent = (props: any): JSX.Element => {
                         {alert}
                     </Alert>
                 )}
-                {initialized && <Landing setAlert={setAlert} />}
+                {initialized && <Landing setAlert={setAlert} table={table}/>}
             </div>
             {!initialized && (
                 <div

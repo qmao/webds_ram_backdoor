@@ -158,3 +158,26 @@ export async function TerminateSSE(): Promise<string | undefined> {
   }
 }
 
+export async function GetSymbolTable(packrat: any): Promise<[]> {
+  let url: any = `?query=table&packrat=${packrat.toString()}`;
+  try {
+    const reply = await requestAPI<any>('ram-backdoor' + url);
+
+    const resultArray: any = [];
+
+    for (const key in reply) {
+      if (reply.hasOwnProperty(key)) {
+        const obj = {
+          name: key,
+          address: reply[key],
+          search: reply[key] + ' - ' + key
+        };
+        resultArray.push(obj);
+      }
+    }
+
+    return Promise.resolve(resultArray);
+  } catch (e) {
+    return Promise.reject((e as Error).message);
+  }
+}

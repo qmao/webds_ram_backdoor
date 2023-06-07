@@ -19,6 +19,7 @@ import {
     Typography
 } from '@mui/material';
 
+import { openJsonInNewWindow } from './RbLog';
 import { webdsService } from './local_exports';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -356,37 +357,6 @@ export const RbMonitor = (props: any): JSX.Element => {
         requestAnimationFrame(sampleTestData);
     }
 
-    const openJsonInNewWindow = () => {
-        const data = sseDataBuffer.current;
-        const jsonString = JSON.stringify(data, null, 2);
-
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-            newWindow.document.write(`
-      <button onclick="downloadJson()">Download JSON</button>
-      <pre>${jsonString}</pre>
-    `);
-            newWindow.document.close();
-
-            const downloadJson = () => {
-                const blob = new Blob([jsonString], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'data.json';
-                link.click();
-                URL.revokeObjectURL(url);
-            };
-
-            newWindow.document.addEventListener('click', (event) => {
-                const target = event.target as HTMLElement;
-                if (target && target.nodeName === 'BUTTON') {
-                    downloadJson();
-                }
-            });
-        }
-    };
-
     async function Terminate() {
         if (eventSource.current) {
             try {
@@ -400,7 +370,7 @@ export const RbMonitor = (props: any): JSX.Element => {
                 let update: any = JSON.parse(JSON.stringify(props.ui));
                 update.auto = auto;
                 props.onUpdate(update);
-                openJsonInNewWindow();
+                openJsonInNewWindow(sseDataBuffer.current);
 
                 sseDataBuffer.current = {};
                 sseDataBufferCount.current = 0;
