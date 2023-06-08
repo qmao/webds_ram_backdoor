@@ -50,9 +50,9 @@ export const RbCards = (props: any): JSX.Element => {
         }
       };
       watchList.current.unshift(new_card);
-      setWatchList(watchList.current).then((l: any) => {
+        let l: any = setWatchList(watchList.current);
         console.log('set watch list', l);
-      });
+      
       EnterCard(0);
     }
     setOpen(false);
@@ -71,9 +71,9 @@ export const RbCards = (props: any): JSX.Element => {
     watchList.current = watchList.current.filter(
       (item: any) => item.name !== name
     );
-    setWatchList(watchList.current).then((l: any) => {
+      let l: any = setWatchList(watchList.current);
       console.log('set watch list', l);
-    });
+    
     setCards(watchList.current);
   };
 

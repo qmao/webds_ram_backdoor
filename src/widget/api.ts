@@ -1,98 +1,68 @@
-import { requestAPI } from '../handler';
+import { requestAPI, settingRegistry} from './local_exports';
 
-interface ISymbol {
-  name: any;
-  address: any;
-  length: any;
+const plugin = "@webds/ram_backdoor:plugin"
+
+const loadExtensionSettings = async() => {
+	async function load() {
+		if (settingRegistry) {
+			try {
+				var s = await settingRegistry.load(plugin);
+				if (s != null) {
+					var value = s.composite["watchList"];
+				}
+				return value;
+
+			} catch (reason) {
+				console.error(`Failed to set settings for ${plugin}\n${reason}`);
+			}
+		}
+		return [];
+	};
+	return await load();
+};
+
+interface ISettingElement {
+  name: string;
+  value: any;
 }
 
-interface IWatchList {
-  id: any;
-  name: any;
-  symbols: ISymbol[];
-  settings: any;
-}
+const setExtensionSettings = (elements: ISettingElement[]) => {
+	if (settingRegistry) {
+		try {
+			elements.forEach(async function (item) {
+				console.log("AAAAAAAAA1....1", item.name, item.value)
+				await settingRegistry.set(plugin, item.name, item.value);
+			});
+		} catch (reason) {
+			console.error(`Failed to set settings for ${plugin}\n${reason}`);
+		}
+		return loadExtensionSettings();
+	}
+	return [];
+};
 
-let sample_watch_list: IWatchList[] = [
-  {
-    id: 'ce63eb61-ae5b-4e7d-96f9-77242f1e6421',
-    name: 'my list 1',
-    symbols: [
-      {
-        name: 'A0_DS',
-        address: 'D600',
-        length: 1
-      },
-      {
-        name: 'A1_DS',
-        address: 'D601',
-        length: 1
-      }
-    ],
-    settings: {
-      mode: 'Master',
-      format: 10,
-      auto_refresh: 0
-    }
-  },
-  {
-    id: 'ce63eb61-ae5b-4e7d-96f9-77242f1e6422',
-    name: 'my list 2',
-    symbols: [
-      {
-        name: 'A0_DS',
-        address: 'D600',
-        length: 1
-      },
-      {
-        name: 'A1_DS',
-        address: 'D601',
-        length: 1
-      },
-      {
-        name: 'A3_DS',
-        address: 'D603',
-        length: 1
-      },
-      {
-        name: 'A4_DS',
-        address: 'D604',
-        length: 1
-      }
-    ],
-    settings: {
-      mode: 'Slave',
-      format: 2,
-      auto_refresh: 1000
-    }
-  }
-];
+export async function updateWatch(content: any) {
 
-export async function updateWatch(content: any): Promise<any> {
-  console.log('API1:', content);
-  return new Promise((resolve, reject) => {
+	let sample_watch_list: any = await getWatchList()
+
     const watchIndex = sample_watch_list.findIndex(
       (w: any) => w.id === content.id
     );
     if (watchIndex !== -1) {
-      sample_watch_list[watchIndex] = { ...content }; // Update the properties of the object in sample_watch_list
+      sample_watch_list[watchIndex] = { ...content };
     }
-    console.log('API:', sample_watch_list[watchIndex]);
-    resolve(sample_watch_list);
-  });
+	setExtensionSettings([{"name": "watchList", "value": sample_watch_list}])
+    return sample_watch_list;
 }
 
-export async function setWatchList(content: any): Promise<any> {
-  sample_watch_list = content;
-  return new Promise((resolve, reject) => {
-    resolve(sample_watch_list);
-  });
+export function setWatchList(content: any) {
+  setExtensionSettings([{"name": "watchList", "value": content}])
 }
 
-export async function getWatchList(): Promise<any> {
-  return new Promise((resolve, reject) => {
-    resolve(sample_watch_list);
-  });
+export async function getWatchList() {
+  let items: any = await loadExtensionSettings();
+  
+  return items;
 }
 
 export async function ReadRAM(data: any, sse: any): Promise<Number[]> {

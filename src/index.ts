@@ -26,6 +26,7 @@ namespace Attributes {
 }
 
 export let webdsService: WebDSService;
+export let settingRegistry: ISettingRegistry;
 
 /**
  * Initialization data for the @webds/ram_backdoor extension.
@@ -40,24 +41,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
     launcher: ILauncher,
     restorer: ILayoutRestorer,
     service: WebDSService,
-    settingRegistry: ISettingRegistry
+    settings: ISettingRegistry
   ) => {
     console.log("JupyterLab extension @webds/ram_backdoor is activated!");
 
     webdsService = service;
-
-/*
-    if (false || settingRegistry) {
-      settingRegistry
-        .load(plugin.id)
-        .then(settings => {
-          console.log('@webds/ram_backdoor settings loaded:', settings.composite);
-        })
-        .catch(reason => {
-          console.error('Failed to load settings for @webds/ram_backdoor.', reason);
-        });
-    }
-*/
+	settingRegistry = settings;
 
     let widget: WebDSWidget;
     const { commands, shell } = app;
@@ -76,7 +65,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
           widget.title.label = Attributes.label;
           widget.title.icon = defaultIcon;
           widget.title.closable = true;
-		  console.log("QQQQQQQQQQ3");
         }
 
         if (!tracker.has(widget)) tracker.add(widget);

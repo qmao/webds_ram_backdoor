@@ -3,6 +3,67 @@
   "title": "@webds/ram_backdoor",
   "description": "@webds/ram_backdoor settings.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "watchList": {
+      "title": "Watch List",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "ID",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "symbols": {
+            "title": "Symbols",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "title": "Name",
+                  "type": "string"
+                },
+                "address": {
+                  "title": "Address",
+                  "type": "string"
+                },
+                "length": {
+                  "title": "Length",
+                  "type": "integer"
+                }
+              },
+              "required": ["name", "address", "length"]
+            }
+          },
+          "settings": {
+            "title": "Settings",
+            "type": "object",
+            "properties": {
+              "mode": {
+                "title": "Mode",
+                "type": "string"
+              },
+              "format": {
+                "title": "Format",
+                "type": "integer"
+              },
+              "auto_refresh": {
+                "title": "Auto Refresh",
+                "type": "integer"
+              }
+            },
+            "required": ["mode", "format", "auto_refresh"]
+          }
+        },
+        "required": ["id", "name", "symbols", "settings"]
+      }
+    }
+  },
   "additionalProperties": false
 }
