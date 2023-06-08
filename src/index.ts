@@ -19,8 +19,8 @@ import RamBackdoorWidget from "./widget/RamBackdoorWidget";
 namespace Attributes {
   export const command = "webds_ram_backdoor:open";
   export const id = "webds_ram_backdoor_widget";
-  export const label = "Ram Backdoor";
-  export const caption = "Ram Backdoor";
+  export const label = "RAM Backdoor";
+  export const caption = "RAM Backdoor";
   export const category = "DSDK - Applications";
   export const rank = 999;
 }

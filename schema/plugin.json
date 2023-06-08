@@ -48,7 +48,7 @@
             "properties": {
               "mode": {
                 "title": "Mode",
-                "type": "string"
+                "type": "integer"
               },
               "format": {
                 "title": "Format",

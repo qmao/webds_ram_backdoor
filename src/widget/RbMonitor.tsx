@@ -423,9 +423,11 @@ export const RbMonitor = (props: any): JSX.Element => {
                 data: []
             };
             ss.data = getReadList(false);
-            ReadRAM(ss, true).then((data: any) => {
-                setBusy(false);
-            });
+            ReadRAM({ data: ss, sse: true, chip: props.ui.watch.settings.mode }).then(
+                (data: any) => {
+                    setBusy(false);
+                }
+            );
         } else {
             Terminate();
         }
@@ -455,7 +457,7 @@ export const RbMonitor = (props: any): JSX.Element => {
 
     const ReadSymbols = (all: any) => {
         let update: any = getReadList(all);
-        ReadRAM(update, false)
+        ReadRAM({ data: update, sse: false, chip: props.ui.watch.settings.mode })
             .then((data: any) => {
                 let newData: any = [...symbols];
                 newData.forEach((s: any) => {
@@ -486,7 +488,11 @@ export const RbMonitor = (props: any): JSX.Element => {
             }
         });
 
-        WriteRegisters(update, false)
+        WriteRegisters({
+            data: update,
+            sse: false,
+            chip: props.ui.watch.settings.mode
+        })
             .then((data: any) => {
                 let newData: any = [...symbols];
 

@@ -30,7 +30,6 @@ const setExtensionSettings = (elements: ISettingElement[]) => {
 	if (settingRegistry) {
 		try {
 			elements.forEach(async function (item) {
-				console.log("AAAAAAAAA1....1", item.name, item.value)
 				await settingRegistry.set(plugin, item.name, item.value);
 			});
 		} catch (reason) {
@@ -65,12 +64,8 @@ export async function getWatchList() {
   return items;
 }
 
-export async function ReadRAM(data: any, sse: any): Promise<Number[]> {
-  var dataToSend = {
-    command: 'read',
-    sse: sse,
-    data: data
-  };
+export async function ReadRAM(props: any): Promise<Number[]> {
+  var dataToSend = {...props, command: 'read'};
 
   try {
     const reply = await requestAPI<any>('ram-backdoor', {
@@ -87,14 +82,9 @@ export async function ReadRAM(data: any, sse: any): Promise<Number[]> {
 }
 
 export async function WriteRegisters(
-  data: any,
-  sse: any
+  props: any
 ): Promise<string | undefined> {
-  var dataToSend = {
-    command: 'write',
-    sse: sse,
-    data: data
-  };
+  var dataToSend = {...props, command: 'write'};
 
   try {
     const reply = await requestAPI<any>('register', {
