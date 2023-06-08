@@ -32,9 +32,7 @@ export const RbAccordions = (props: any): JSX.Element => {
     );
     const [chipName, setChipName] = useState('');
 
-    useEffect(() => {
-        console.log('SSSS', props.ui.watch.settings);
-    }, []);
+    useEffect(() => { }, []);
 
     useEffect(() => {
         switch (mode) {
@@ -60,7 +58,6 @@ export const RbAccordions = (props: any): JSX.Element => {
         updateWatch(update.watch).then((l: any) => {
             console.log('l');
         });
-        console.log('NNNNNNNNNN', update.watch.settings);
     }
 
     const handleChange = (panel: string) => (

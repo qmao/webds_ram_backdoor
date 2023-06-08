@@ -265,7 +265,7 @@ export const RbMonitor = (props: any): JSX.Element => {
     const eventSource = useRef<undefined | EventSource>(undefined);
     const eventError = useRef(false);
     const eventType = 'RamBackdoor';
-    const eventRoute = 'http://localhost:8889/webds/ram-backdoor';
+    const eventRoute = '/webds/ram-backdoor';
     const sseData = useRef<IResponse[]>([]);
     const sseDataBuffer = useRef<{ [key: string]: any }>({});
     const sseDataBufferCount = useRef(0);
