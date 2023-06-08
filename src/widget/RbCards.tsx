@@ -101,9 +101,6 @@ export const RbCards = (props: any): JSX.Element => {
                 <MyCard
                     key={'card' + props.index}
                     onClick={() => EnterCard(props.index)}
-                    sx={{
-                        overflowY: 'auto'
-                    }}
                 >
                     <Stack
                         key={'cardstack' + props.index}
@@ -140,7 +137,19 @@ export const RbCards = (props: any): JSX.Element => {
                         >
                             {props.card.name}
                         </MyTypography>
-                        <Box sx={{ p: 1 }} key={'cardbox' + props.index}>
+                        <Box
+                            sx={{
+                                p: 1,
+                                overflowY: 'auto',
+                                overflowX: 'hidden',
+                                maxHeight: 100,
+                                maxWidth: 230,
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '1.5px'
+                            }}
+                            key={'cardbox' + props.index}
+                        >
                             {props.card.symbols.map((s: any, i: any) => (
                                 <Typography
                                     variant="caption"
