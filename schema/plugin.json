@@ -6,6 +6,7 @@
   "properties": {
     "watchList": {
       "title": "Watch List",
+	  "description": "User Watch List",
       "default": [],
       "type": "array",
       "items": {
