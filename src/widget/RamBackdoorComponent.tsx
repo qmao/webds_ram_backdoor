@@ -33,26 +33,13 @@ export const RamBackdoorComponent = (props: any): JSX.Element => {
     const webdsTheme = webdsService.ui.getWebDSTheme();
 
     useEffect(() => {
-        const checkHex = async () => {
-            if (webdsService.pinormos) {
-                webdsService.packrat.cache.addApplicationHex().then((ret: any) => {
-                    console.log(ret);
-                }).catch((e: any) => {
-                    console.log(e.toString());
-                    throw new Error("HEX file not found"); 
-                })
-                
-            }
-        }
-
         const initialize = async () => {
-            getIdentify().then((identify: any) => {
-                console.log(identify);
+            webdsService.packrat.cache.addApplicationHex().then(() => {
+                return getIdentify()
+            }).then((identify: any) => { 
                 return GetSymbolTable(identify["buildID"]);
             }).then((table: any) => {
                 setTable(table);
-                return checkHex();
-            }).then((ret: any) => {
                 setInitialized(true);
             }).catch((e: any) => {
                 setAlert(e.toString());
