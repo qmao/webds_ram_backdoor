@@ -21,8 +21,8 @@ namespace Attributes {
   export const id = "webds_ram_backdoor_widget";
   export const label = "RAM Backdoor";
   export const caption = "RAM Backdoor";
-  export const category = "DSDK - Applications";
-  export const rank = 999;
+  export const category = "Device - Assessment";
+  export const rank = 100;
 }
 
 export let webdsService: WebDSService;
